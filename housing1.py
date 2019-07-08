@@ -24,10 +24,11 @@ q = ['LotFrontage', 'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'Bsm
 
 # print(len(data))
 
-df = df.drop(['Alley', 'PoolQC', 'Fence', 'MiscFeature', 'FireplaceQu',
-              'LotFrontage', 'GarageType', 'GarageYrBlt', 'GarageFinish', 'GarageQual', 'GarageCond'], axis=1)
+df = df.drop(p, axis=1)
 
-df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]
+# 'LotFrontage', 'GarageType', 'GarageYrBlt', 'GarageFinish', 'GarageQual', 'GarageCond'
+
+# df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]
 
 # for i in df.columns:
 #     print(i, ': ', df[i].unique())
@@ -47,6 +48,8 @@ for i in df1.columns:
 # df = df.drop(['SalePrice'], axis=1)
 
 df = df.join(a1)
+for i in df.columns:
+    df[i].fillna((df[i].mean()), inplace=True)
 
 
 def normalize(df):
@@ -83,8 +86,8 @@ cor_target = abs(cor['SalePrice'])
 
 # Selecting highly correlated features
 relevant_features = cor_target[cor_target > 0.5]
-print(relevant_features)
-print(len(relevant_features))
+# print(relevant_features)
+# print(len(relevant_features))
 
 
 # df = df[['OverallQual', 'TotalBsmtSF', '1stFlrSF', 'GrLivArea', 'FullBath',
@@ -122,23 +125,18 @@ print(x_test.shape)
 print(y_train.shape)
 print(y_test.shape)
 
-# model = LinearRegression()
-# model.fit(x_train, y_train)
-#
-# y_pred = model.predict(x_test)
+model = LinearRegression()
+model.fit(x_train, y_train)
 
-
-
-model = pickle.load(open('linear_regression_model.sav', 'rb'))
 y_pred = model.predict(x_test)
 
-# filename = 'linear_regression_model.sav'
+
+# model = pickle.load(open('linear_regression_model_2.sav', 'rb'))
+# y_pred = model.predict(x_test)
+
+# filename = 'linear_regression_model_2.sav'
 # pickle.dump(model, open(filename, 'wb'))
 
-
-
-print(type(y_pred))
-print(type(y_test))
 
 df_ans= pd.DataFrame({'y_pred': y_pred, 'y_test': y_test})
 # df_ans = y_test.join(y_pred)

@@ -35,11 +35,11 @@ for i in df.columns:
 
 X = df.copy()
 
-model = pickle.load(open('linear_regression_model.sav', 'rb'))
+model = pickle.load(open('linear_regression_model_2.sav', 'rb'))
 y_pred = model.predict(X)
 
 y_pred = pd.DataFrame({'SalePrice': y_pred})
 print(len(y_pred))
 
-e = y_pred.to_csv('submit1.csv', header=True)
+e = y_pred.to_csv('submit3.csv', header=True)
 print(y_pred)
