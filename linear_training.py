@@ -27,11 +27,11 @@ for i in df.columns:
 ### FEATURES TO BE DROPPED ###
 
 # Alley - (1369 NaN) - object
-# FireplaceQu - (690 NaN) - object
 # PoolQC - (1453 NaN) - object
 # Fence - (1179 NaN) - object
 # MiscFeature - (1406 NaN) - object
 
+# FireplaceQu - (690 NaN) - object
 # LotFrontage - (259 NaN) - int
 # GarageType - (81 NaN) - object
 # GarageYrBlt - (81 NaN) - object
@@ -56,7 +56,7 @@ f3 = ['BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2']
 f4 = ['MasVnrType', 'MasVnrArea', 'Electrical']
 
 df = df.drop(f1, axis=1)
-# df = df.drop(f2, axis=1)
+df = df.drop(f2, axis=1)
 
 ### REMOVING NaNs ###
 
@@ -68,6 +68,12 @@ df = df.drop(f1, axis=1)
 df1 = df.select_dtypes(include=['object']).copy()
 df = df.drop(df1.columns, axis=1)
 
+for i in df1.columns:
+    df1[i].fillna((df1[i].mode()), inplace=True)
+
+for i in df.columns:
+    df[i].fillna((df[i].median()), inplace=True)
+
 a1 = df1.copy()
 for i in df1.columns:
     a1[i] = a1[i].astype('category')
@@ -78,14 +84,22 @@ df = df.join(a1)
 
 ### REPLACING NaNs WITH MEAN VALUE ###
 
-for i in df.columns:
-    df[i].fillna((df[i].mean()), inplace=True)
+# for i in df.columns:
+#     df[i].fillna((df[i].mean()), inplace=True)
 
 
 ### NORMALIZING AND SCALING ###
 
 # df_y = df['SalePrice']
 # df = df.drop(['SalePrice'], axis=1)
+
+
+### Scaling the Data ###
+
+# scaler = MinMaxScaler()
+# df = scaler.fit_transform(df)
+# df = pd.DataFrame(df)
+
 
 ### Normalizing the Data ###
 
@@ -99,14 +113,8 @@ def normalize(df):
 
 
 # df = normalize(df)
-
-
-### Scaling the Data ###
-
-# scaler = MinMaxScaler()
-# df = scaler.fit_transform(df)
-
-
+#
+#
 # df = pd.DataFrame(df)
 # df_y = pd.DataFrame(df_y)
 # df = df.join(df_y)
@@ -153,7 +161,7 @@ print('No. of Relevant Features:', len(relevant_features))  # 13
 X = df.drop(['SalePrice'], axis=1)
 Y = df['SalePrice']
 
-x_train, x_valid, y_train, y_valid = train_test_split(X, Y, test_size=0.2, random_state=7)
+x_train, x_valid, y_train, y_valid = train_test_split(X, Y, test_size=0.25, random_state=87)
 
 print('X_TRAIN: ', x_train.shape)
 print('X_VALID: ', x_valid.shape)
@@ -163,25 +171,25 @@ print('Y_VALID: ', y_valid.shape)
 
 ### DEFINING AND TRAINING MODEL ###
 
-# model = LinearRegression()
-# model.fit(x_train, y_train)
+model = LinearRegression()
+model.fit(x_train, y_train)
 
 
 ### PREDICTIONS ###
 
-# y_pred = model.predict(x_valid)
+y_pred = model.predict(x_valid)
 
 
 ### SAVING MODEL ###
 
-# filename = 'linear_regression_model_3.sav'
+# filename = 'linear_regression_model_2.sav'
 # pickle.dump(model, open(filename, 'wb'))
 
 
 ### LOADING SAVED MODEL ###
 
-model = pickle.load(open('linear_regression_model_2.sav', 'rb'))
-y_pred = model.predict(x_valid)
+# model = pickle.load(open('linear_regression_model_4.sav', 'rb'))
+# y_pred = model.predict(x_valid)
 
 
 ### VALIDATING MODEL PERFORMANCE ###
